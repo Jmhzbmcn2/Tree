@@ -6,6 +6,7 @@ public class Main {
         searchingProgram.search(100);
 
 
+        //He he he hé
         //Tôi vừa sửa trên này , hãy down về lại đi
     }
 }
