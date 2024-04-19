@@ -1,4 +1,4 @@
-package ex_3;
+package midtermkhoakhoa.polynomial;
 
 public class NewtonRaphsonSolver implements RootSolver {
     private double tolerance;
@@ -25,16 +25,14 @@ public class NewtonRaphsonSolver implements RootSolver {
     @Override
     public double solve(Polynomial polynomial, double lower, double upper) {
         /* TODO */
-        double x0 = (lower + upper) / 2;
-        for (int i = 0; i < maxIterations; i++) {
-            double f = polynomial.evaluate(x0);
-            double fPrime = polynomial.derivative().evaluate(x0);
-            double x1 = x0 - f / fPrime;
-            if (Math.abs(x1 - x0) < tolerance || f == 0) {
-                return x1;
-            }
-            x0 = x1;
+        Polynomial derivative = polynomial.derivative();
+        int n = 1;
+        double x0 = -20; //guess x0
+        double h = polynomial.evaluate(x0) / derivative.evaluate(x0);
+        while (n <= maxIterations && Math.abs(h) >= tolerance) {
+            h = polynomial.evaluate(x0) / derivative.evaluate(x0);
+            x0 = x0 - h;
         }
-        return (lower + upper) / 2;
+        return x0;
     }
 }
