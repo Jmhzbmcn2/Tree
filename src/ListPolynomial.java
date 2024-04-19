@@ -1,6 +1,8 @@
-package ex_3;
+package midtermkhoakhoa.polynomial;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 public class ListPolynomial extends AbstractPolynomial {
@@ -9,11 +11,20 @@ public class ListPolynomial extends AbstractPolynomial {
     /**
      * Khởi tạo dữ liệu mặc định.
      */
-    public ListPolynomial(List<Double> derivativeCoeffs) {
+    public ListPolynomial() {
         /* TODO */
-        coefficients = new ArrayList<>();
+        this.coefficients = new ArrayList<>();
     }
+    public ListPolynomial(double[] array) {
+        this.coefficients = new ArrayList<>();
+        for (double coefficient : array) {
+            coefficients.add(coefficient);
+        }
 
+    }
+    private boolean checkBoundaries(int index) {
+        return index >= 0 && index < this.coefficients.size();
+    }
     /**
      * Lấy hệ số của đa thức tại vị trí index.
      * @return
@@ -21,8 +32,8 @@ public class ListPolynomial extends AbstractPolynomial {
     @Override
     public double coefficientAt(int index) {
         /* TODO */
-        if (index < 0 || index >= coefficients.size()) {
-            throw new IndexOutOfBoundsException("Index out of bounds");
+        if (!checkBoundaries(index)) {
+            return -1;
         }
         return coefficients.get(index);
     }
@@ -34,11 +45,11 @@ public class ListPolynomial extends AbstractPolynomial {
     @Override
     public double[] coefficients() {
         /* TODO */
-        double[] coeffs = new double[coefficients.size()];
-        for (int i = 0; i < coefficients.size(); i++) {
-            coeffs[i] = coefficients.get(i);
+        double[] result = new double[coefficients.size()];
+        for (int i = 0; i < result.length; i++) {
+            result[i] = coefficients.get(i);
         }
-        return coeffs;
+        return result;
     }
 
     /**
@@ -48,7 +59,7 @@ public class ListPolynomial extends AbstractPolynomial {
      */
     public void insertAtStart(double coefficient) {
         /* TODO */
-        coefficients.add(0, coefficient);
+        coefficients.add(0,coefficient);
     }
 
     /**
@@ -69,6 +80,9 @@ public class ListPolynomial extends AbstractPolynomial {
      */
     public void insertAtPosition(int index, double coefficient) {
         /* TODO */
+        if (!checkBoundaries(index)) {
+            return;
+        }
         coefficients.add(index, coefficient);
     }
 
@@ -80,8 +94,8 @@ public class ListPolynomial extends AbstractPolynomial {
      */
     public void set(int index, double coefficient) {
         /* TODO */
-        if (index < 0 || index >= coefficients.size()) {
-            throw new IndexOutOfBoundsException("Index out of bounds");
+        if (!checkBoundaries(index)) {
+            return;
         }
         coefficients.set(index, coefficient);
     }
@@ -93,7 +107,7 @@ public class ListPolynomial extends AbstractPolynomial {
     @Override
     public int degree() {
         /* TODO */
-        return coefficients.size() - 1;
+        return coefficients.size() + 1;
     }
 
     /**
@@ -103,9 +117,9 @@ public class ListPolynomial extends AbstractPolynomial {
     @Override
     public double evaluate(double x) {
         /* TODO */
-        double result = 0;
-        for (int i = 0; i < coefficients.size(); i++) {
-            result += coefficients.get(i) * Math.pow(x, i);
+        double result = coefficients.get(coefficients.size() - 1);
+        for (int i = coefficients.size() - 2; i >= 0; i--) {
+            result = result * x + coefficients.get(i);
         }
         return result;
     }
@@ -117,11 +131,7 @@ public class ListPolynomial extends AbstractPolynomial {
     @Override
     public Polynomial derivative() {
         /* TODO */
-        List<Double> derivativeCoeffs = new ArrayList<>();
-        for (int i = 1; i < coefficients.size(); i++) {
-            derivativeCoeffs.add(coefficients.get(i) * i);
-        }
-        return new ListPolynomial(derivativeCoeffs);
+        return new ListPolynomial(differentiate());
     }
 
     /**
@@ -130,15 +140,18 @@ public class ListPolynomial extends AbstractPolynomial {
      * @return đa thức hiện tại.
      */
     public ListPolynomial plus(ListPolynomial another) {
-        /* TODO */
-        int maxDegree = Math.max(this.degree(), another.degree());
-        List<Double> resultCoeffs = new ArrayList<>();
-        for (int i = 0; i <= maxDegree; i++) {
-            double thisCoeff = (i <= this.degree()) ? this.coefficientAt(i) : 0;
-            double anotherCoeff = (i <= another.degree()) ? another.coefficientAt(i) : 0;
-            resultCoeffs.add(thisCoeff + anotherCoeff);
+        int size = Math.max(this.degree(), another.degree()) - 1;
+        double[] sum = new double[size];
+
+        // Initialize the product polynomial
+        for (int i = 0; i < coefficients.size(); i++) {
+            sum[i] = coefficients.get(i);
         }
-        return new ListPolynomial(resultCoeffs);
+
+        for (int i = 0; i < another.degree() - 1; i++) {
+            sum[i] += another.coefficientAt(i);
+        }
+        return new ListPolynomial(sum);
     }
 
     /**
@@ -148,14 +161,18 @@ public class ListPolynomial extends AbstractPolynomial {
      */
     public ListPolynomial minus(ListPolynomial another) {
         /* TODO */
-        int maxDegree = Math.max(this.degree(), another.degree());
-        List<Double> resultCoeffs = new ArrayList<>();
-        for (int i = 0; i <= maxDegree; i++) {
-            double thisCoeff = (i <= this.degree()) ? this.coefficientAt(i) : 0;
-            double anotherCoeff = (i <= another.degree()) ? another.coefficientAt(i) : 0;
-            resultCoeffs.add(thisCoeff - anotherCoeff);
+        int size = Math.max(this.degree(), another.degree()) - 1;
+        double[] sum = new double[size];
+
+        // Initialize the product polynomial
+        for (int i = 0; i < coefficients.size(); i++) {
+            sum[i] = coefficients.get(i);
         }
-        return new ListPolynomial(resultCoeffs);
+
+        for (int i = 0; i < another.degree() - 1; i++) {
+            sum[i] -= another.coefficientAt(i);
+        }
+        return new ListPolynomial(sum);
     }
 
     /**
@@ -164,19 +181,20 @@ public class ListPolynomial extends AbstractPolynomial {
      * @return đa thức hiện tại.
      */
     public ListPolynomial multiply(ListPolynomial another) {
-        /* TODO */
-        int newDegree = this.degree() + another.degree();
-        List<Double> resultCoeffs = new ArrayList<>();
-        for (int i = 0; i <= newDegree; i++) {
-            double coeff = 0;
-            for (int j = 0; j <= i; j++) {
-                if (j <= this.degree() && (i - j) <= another.degree()) {
-                    coeff += this.coefficientAt(j) * another.coefficientAt(i - j);
-                }
-            }
-            resultCoeffs.add(coeff);
-        }
-        return new ListPolynomial(resultCoeffs);
-    }
+        int sharedSize = coefficients.size() + another.degree() - 1 - 1;
+        double[] prod = new double[sharedSize];
 
+        // Multiply two polynomials term by term
+        // Take ever term of first polynomial
+        for (int i = 0; i < this.coefficients.size(); i++)
+        {
+            // Multiply the current term of first polynomial
+            // with every term of second polynomial.
+            for (int j = 0; j < another.degree() - 1; j++)
+            {
+                prod[i + j] += coefficients.get(i) * another.coefficientAt(j);
+            }
+        }
+        return new ListPolynomial(prod);
+    }
 }

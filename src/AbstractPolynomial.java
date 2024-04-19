@@ -1,4 +1,4 @@
-package ex_3;
+package midtermkhoakhoa.polynomial;
 
 public abstract class AbstractPolynomial implements Polynomial {
     /**
@@ -7,27 +7,17 @@ public abstract class AbstractPolynomial implements Polynomial {
      */
     @Override
     public String toString() {
-        /* TODO *
-         */
-        StringBuilder builder = new StringBuilder();
-        int degree = degree();
-        for (int i = 0; i <= degree; i++) {
-            double coefficient = coefficientAt(i);
-            if (coefficient != 0) {
-                if (builder.length() > 0) {
-                    builder.append(" + ");
-                }
-                builder.append(coefficient);
-                if (i > 0) {
-                    builder.append("x");
-                    if (i > 1) {
-                        builder.append("^").append(i);
-                    }
-                }
+        StringBuilder sb = new StringBuilder();
+        sb.append("[");
+        for (int deg = 0; deg < degree() - 1; deg++) {
+            sb.append(coefficientAt(deg)).append(" ");
+            if (deg != 0) {
+                sb.append("x ^ ").append(deg);
             }
+            sb.append(" + ");
         }
-        return builder.toString();
-
+        String result = sb.toString();
+        return result.substring(0, result.length() - 3) + "]";
     }
 
     /**
@@ -36,11 +26,10 @@ public abstract class AbstractPolynomial implements Polynomial {
      */
     public double[] differentiate() {
         /* TODO */
-        int degree = degree();
-        double[] derivativeCoefficients = new double[degree];
-        for (int i = 1; i <= degree; i++) {
-            derivativeCoefficients[i - 1] = coefficientAt(i) * i;
+        double[] result = new double[this.coefficients().length - 1];
+        for (int i = 1; i < degree() - 1; i++) {
+            result[i-1] = coefficientAt(i) * i;
         }
-        return derivativeCoefficients;
+        return result;
     }
 }
