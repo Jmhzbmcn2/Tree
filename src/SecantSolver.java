@@ -1,4 +1,4 @@
-package ex_3;
+package midtermkhoakhoa.polynomial;
 
 public class SecantSolver implements RootSolver {
     private double tolerance;
@@ -25,19 +25,41 @@ public class SecantSolver implements RootSolver {
     @Override
     public double solve(Polynomial polynomial, double lower, double upper) {
         /* TODO */
-        double x0 = lower;
-        double x1 = upper;
-        for (int i = 0; i < maxIterations; i++) {
-            double f0 = polynomial.evaluate(x0);
-            double f1 = polynomial.evaluate(x1);
-            if (Math.abs(f1) < tolerance) {
-                return x1;
-            }
-            double x2 = x1 - f1 * ((x1 - x0) / (f1 - f0));
-            x0 = x1;
-            x1 = x2;
-            f0 = f1;
+        double n = 0, xm, x0, c;
+        if (polynomial.evaluate(lower) * polynomial.evaluate(upper) < 0)
+        {
+            do {
+
+                // calculate the intermediate
+                // value
+                x0 = (lower * polynomial.evaluate(upper) - upper * polynomial.evaluate(lower))
+                        / (polynomial.evaluate(upper) - polynomial.evaluate(lower));
+
+                // check if x0 is root of
+                // equation or not
+                c = polynomial.evaluate(lower) * polynomial.evaluate(x0);
+
+                // update the value of interval
+                lower = upper;
+                upper = x0;
+
+                // update number of iteration
+                n++;
+
+                // if x0 is the root of equation
+                // then break the loop
+                if (c == 0)
+                    break;
+                xm = (lower * polynomial.evaluate(upper) - upper * polynomial.evaluate(lower))
+                        / (polynomial.evaluate(upper) - polynomial.evaluate(lower));
+
+                // repeat the loop until the
+                // convergence
+            } while (Math.abs(xm - x0) >= tolerance);
+            return x0;
         }
-        return x1;
+
+        System.out.print("Can not find a" + " root in the given interval");
+        return -1;
     }
 }
