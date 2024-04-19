@@ -105,7 +105,7 @@ public class TestPolynomial {
         System.out.println("Derivative of poly1 is " + poly1.derivative());
     }
 
-    public static void testRootSolver() {
+   public static void testRootSolver() {
         /*
          TODO
 
@@ -114,6 +114,21 @@ public class TestPolynomial {
            PolynomialRootFinding. Các phương pháp tìm nghiệm của thể thay đổi ở thời gian chạy chương trình.
          - In ra phương pháp sử dụng, đa thức, và nghiệm của đa thức.
          */
+        Polynomial polynomial = new ListPolynomial(new double[]{2, 0, -1, 1});
+        RootSolver rootSolver = new BisectionSolver(0.01, 1000);
+        PolynomialRootFinding polynomialRootFinding = new PolynomialRootFinding(polynomial, rootSolver);
+        System.out.println(polynomialRootFinding.solve(-200, 300));
 
+        polynomial = new ListPolynomial(new double[]{2, 0, -1, 1});
+        rootSolver = new NewtonRaphsonSolver(0.01, 1000);
+        polynomialRootFinding.setPoly(polynomial);
+        polynomialRootFinding.setRootSolver(rootSolver);
+        System.out.println(polynomialRootFinding.solve(0, 0));
+
+        polynomial = new ListPolynomial(new double[]{-612, 0, 1});
+        rootSolver = new SecantSolver(0.0001, 5);
+        polynomialRootFinding.setPoly(polynomial);
+        polynomialRootFinding.setRootSolver(rootSolver);
+        System.out.println(polynomialRootFinding.solve(10, 30));
     }
 }
